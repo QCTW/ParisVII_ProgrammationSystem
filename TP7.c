@@ -26,7 +26,7 @@ int main (int argc, char* argv[])
 		struct sigaction act;
 		act.sa_handler = signal_callback_handler;
 		act.sa_flags = 0;
-		sigaction(SIGUSR1, &act, NULL); //const struct sigaction *restrict act, struct sigaction *restrict oact);
+		sigaction(SIGUSR1, &act, NULL); //In Mac there are 3 parameters
 		printf("La belle: Humm...zzZz\n");
 		pause();
 	}
