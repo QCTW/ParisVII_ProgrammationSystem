@@ -31,19 +31,21 @@ int main (int argc, char* argv[])
 	sprintf(addr.sun_path, "%s", socketPath);
 	int connrc = connect(socketFd, (struct sockaddr *) &addr, sizeof(struct sockaddr_un));
 	if(connrc<0)
-		perror("Unable to connect to socket");
-
-	printf( "Chat %d started...\n", getpid() );
-
-	char msg[256];
-	//sprintf(msg, "Bonjour de client %d", getpid());
-	while(1)
+		perror("Unable to connect to socket. Server is down.");
+	else
 	{
-		int nRead = read(STDIN_FILENO, msg, 256);
-		msg[nRead-1] = 0;
-		//scanf( "%s", msg );
-		send(socketFd, msg, strlen(msg), 0);
-		printf("Message '%s' sent to socket %d.\n", msg, socketFd);
+		printf( "Chat %d started...\n", getpid() );
+
+		char msg[256];
+		//sprintf(msg, "Bonjour de client %d", getpid());
+		while(1)
+		{
+			int nRead = read(STDIN_FILENO, msg, 256);
+			msg[nRead-1] = 0;
+			//scanf( "%s", msg );
+			send(socketFd, msg, strlen(msg), 0);
+			printf("Message '%s' sent to socket %d.\n", msg, socketFd);
+		}
+		close(connrc);
 	}
-	close(connrc);
 }
