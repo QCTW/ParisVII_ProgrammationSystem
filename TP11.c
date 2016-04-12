@@ -19,20 +19,23 @@ struct target
 	int* array;
 };
 
-int sum = 0;
 pthread_mutex_t verrou;
 
 void* somme(void* args)
 {
 	struct target t = *(struct target*) args;
+	int* sum = malloc(sizeof(int));
+	*sum = 0;
 	for(int i = t.startPos; i<t.startPos+t.nbToCalculate; i++)
 	{
-		pthread_mutex_lock(&verrou);
-		sum = sum+t.array[i];
-		printf("Thread_%d: Some(%d)=%d+%d; t.startPos=%d; t.nbToCalculate=%d \n", t.threadId, i, sum, t.array[i], t.startPos, t.nbToCalculate);
-		pthread_mutex_unlock(&verrou);
+		//pthread_mutex_lock(&verrou);
+		*sum = *sum+t.array[i];
+		printf("Thread_%d: Somme(%d)+=%d; startPos=%d; nbToCalculate=%d \n", t.threadId, i, t.array[i], t.startPos, t.nbToCalculate);
+		//pthread_mutex_unlock(&verrou);
 	}
-	return NULL;
+	printf("Thread_%d: Sub-sum=%d\n", t.threadId, *sum);
+	//return sum;
+	pthread_exit(sum);
 }
 
 int main (int argc, char* argv[])
@@ -66,8 +69,12 @@ int main (int argc, char* argv[])
 			printf("pthread_create %d\n", i);
 	}
 
-	for(int i=0; i<n; i++){
-		pthread_join(pthread[i], NULL);
+	int final = 0;
+	for(int i=0; i<n; i++)
+	{
+		void* res;
+		pthread_join(pthread[i], &res);
+		final += *(int*) res;
 	}
-	printf("Final sum=%d\n", sum);
+	printf("Final sum=%d\n", final);
 }
