@@ -55,7 +55,7 @@ int main (int argc, char* argv[])
 				}
 				printf("Parent get child's PID=%d\n", *sharedChar);
 			}
-
+			//Remove memory map
 			munmap(mapped, stFile.st_size);
 			close(fdSynchro);
 		}
